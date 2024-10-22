@@ -1,19 +1,81 @@
 
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import avatarImg from '../assets/avatar.png';
 import CartModal from '../pages/shop/CartModal';
+import { useLogoutUserMutation } from '../redux/features/auth/authApi';
+import { logout } from '../redux/features/auth/authSlice';
 
 const Navbar = () => {
 
   const products = useSelector((state)=> state.cart.products);
    //console.log(products)
   const [isCartOpen , setIsCartOpen] = useState(false);
+  const [ isDropDownOpen , setIsDropDownOpen] = useState(false);
+
+
+  //////// HANDLE CART TOGGLE /////////////
 
   const handleCartToggle = () => {
     setIsCartOpen(!isCartOpen);
   }
+
  
+  
+  // SHOW USER IF LOGGED IN
+
+  const dispatch = useDispatch();
+  const {user} = useSelector((state)=>state.auth);
+  console.log(user);
+const [logoutUser] = useLogoutUserMutation();
+const navigate = useNavigate();
+
+
+
+
+   /////// DROP DOWN MENUS /////////////
+
+ const handleDropDownToggle = () =>{
+    setIsDropDownOpen(!isDropDownOpen);
+  }
+
+
+/////////// ADMIN DROP DOWN MENUS ////////////
+
+const adminDropDownMenus = [
+    {label: "Dashboard", path: "/dashboard/admin"},
+    {label: "Manage Items", path: "/dashboard/manage-products"},
+    {label: "All Orders", path: "/dashboard/manage-orders"},
+    {label: "Add New Post", path: "/dashboard/add-new-post"},
+]
+
+/////////// USER DROP DOWN MENUS ////////////
+
+
+const userDropDownMenus = [
+  {label: "Dashboard", path: "/dashboard"},
+  {label: "Profile", path: "/dashboard/profile"},
+  {label: "Payments", path: "/dashboard/payments"},
+  {label: "Orders", path: "/dashboard/orders"},
+]
+
+
+  const dropDownMenus = user?.role === 'admin' ? [...adminDropDownMenus] : [...userDropDownMenus];
+
+
+  const handleLogOut = async ()=>{
+    try {
+      await logoutUser().unwrap();
+      dispatch(logout());
+      navigate('/')
+    } catch (error) {
+      console.error("Failed to logout",error)
+    }
+
+
+
+  }
 
   return (
     <header className='fixed-nav-bar w-nav'>
@@ -48,10 +110,54 @@ const Navbar = () => {
                         </button>
                       </span>
 
+                        {/* User Login Register */}
+
+                        
                       <span>
-                        <Link to={"/login"}>
+
+                        {
+                          user ? (
+                          
+                          <>
+                       <img 
+                       onClick={handleDropDownToggle}
+                       src={user?.profileImage || avatarImg} alt=''className='size-6 rounded-full cursor-pointer'/>
+                       {
+                        isDropDownOpen && (
+                            <div className='absolute right-0 mt-3 p-4 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50'>
+                              <ul className='font-medium space-y-2 p-2'>
+                                {dropDownMenus.map((menu,index)=>(
+
+                                  <li key={index}>
+                                    <Link 
+                                      onClick={()=>setIsDropDownOpen(false)}
+                                      className='dropdown-items' to={menu.path}
+                                    
+                                    >
+                                      {menu.label}
+                                    </Link>
+                                  </li>
+
+                                ))}
+                                <li><Link onClick={handleLogOut} className='dropdown-items'>Logout</Link></li>
+                              </ul>
+                            </div>
+
+                        )
+
+
+                       }
+                          
+                          </>    ) :
+                          
+                        (
+                            <Link to={"/login"}>
                          <i className="ri-user-line"></i>
-                        </Link>
+                        </Link> 
+
+                        )
+                        }
+                        
                       </span>
                     </div>
             </nav>
