@@ -50,6 +50,10 @@ router.get('/', async (req, res)=> {
         if(color && color !=="all") {
             filter.color = color ;
         }
+
+
+      {/*
+
         if(minPrice && maxPrice) {
             const min = parseFloat(minPrice);
             const max = parseFloat(maxPrice);
@@ -57,6 +61,20 @@ router.get('/', async (req, res)=> {
                 filter.price = { $gte: min, $lte:max};
             }
         }
+        
+        */}  
+
+        
+        if (minPrice || maxPrice) {
+            const min = minPrice ? parseFloat(minPrice) : 0; // Default to 0 if not provided
+            const max = maxPrice ? parseFloat(maxPrice) : Infinity; // Default to Infinity if not provided
+    
+            if (!isNaN(min) && !isNaN(max)) {
+                filter.price = { $gte: min, $lte: max };
+            }
+        }
+
+        
         const skip =(parseInt(page) - 1) * parseInt(limit);
         const totalProducts = await Products.countDocuments(filter);
         const totalPages = Math.ceil(totalProducts / parseInt(limit));

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import productsData from "../../data/products.json";
+import Loading from '../../components/Loading';
+import { useFetchAllProductsQuery } from '../../redux/features/products/productsApi';
 import ProductCards from './ProductCards';
 import ShopFiltering from './ShopFiltering';
 
@@ -18,7 +19,7 @@ import ShopFiltering from './ShopFiltering';
 
 
 const ShopPage = () => {
-    const [products ,setProducts] = useState(productsData);
+    //const [products ,setProducts] = useState(productsData);
 
     const[filtersState , setFiltersState] = useState({
         category : 'all',
@@ -26,7 +27,41 @@ const ShopPage = () => {
         priceRange : ''
     });
 
-   const applyFilters = () =>{
+    const [currentPage , setCurrentPage] = useState(1);
+    const [ProductsPerPage] = useState(8);
+
+    const { category , color , priceRange} = filtersState;
+
+     let minPrice = 0;
+    let maxPrice = Infinity;
+
+     [minPrice , maxPrice] = priceRange.split('-').map(Number);
+   {/*
+   
+    
+    if (priceRange) {
+        if (priceRange === '$0 - $50') {
+            minPrice = 0;
+            maxPrice = 50; // For 'under $50'
+        } else {
+            [minPrice, maxPrice] = priceRange.split('-').map(Number);
+        }
+    }
+    
+    */} 
+
+
+    const {data: {products = [], totalPages , totalProducts}= {},error , isLoading} = useFetchAllProductsQuery({
+        category: category!== 'all' ? category: '',
+        color: color!== 'all'? color:'',
+        minPrice: isNaN(minPrice) ? '' : minPrice,
+        maxPrice: isNaN(maxPrice) ? '' : maxPrice,
+        page: currentPage,
+        limit: ProductsPerPage ,
+
+    })
+
+  {/*  const applyFilters = () =>{
 
         let filteredProducts = productsData;
 
@@ -64,8 +99,9 @@ const ShopPage = () => {
         applyFilters();
 
 
-   },[filtersState]);
-
+   },[filtersState]); */}
+ 
+   // CLEAR FILTERS
 
    const clearFilters = () => {
     setFiltersState({
@@ -74,11 +110,24 @@ const ShopPage = () => {
         priceRange : ''
     })
 
-
-
    }
 
+ //// HANDLE PAGE CHANGE
 
+ const handlePageChange= (pageNumber) => {
+    if(pageNumber > 0 && pageNumber <= totalPages){
+        setCurrentPage(pageNumber)
+    }
+ }
+
+
+
+   if(isLoading) return <Loading/>
+   if(error) return <div>Error loading Products</div>
+
+
+ const startProduct = (currentPage - 1) * ProductsPerPage + 1 ;
+ const endProduct = startProduct + products.length - 1;
     
   return (
    <>
@@ -105,8 +154,30 @@ const ShopPage = () => {
 
                 {/* RIGHT SIDE */}
                 <div>   
-                    <h3 className='text-xl font-medium mb-4'> Products Available: {products.length}</h3>
+                    <h3 className='text-xl font-medium mb-4'> Showing {startProduct} to {endProduct} of {totalProducts} products.</h3>
                     <ProductCards products={products}/>
+
+
+                    {/* PAGINATION */}
+
+                     
+                    <div className='mt-6 flex justify-center'>
+                        <button disabled={currentPage == 1} onClick={()=>handlePageChange(currentPage-1)} className='px-4 py-2 bg-gray-200 text-gray-700 rounded-md mr-2'>Previous</button>
+
+                            {
+                               
+                                     [...Array(totalPages)].map((_, index) => (
+                                        <button onClick={()=> handlePageChange(index+1)} key={index} className={`px-4 py-2 ${currentPage === index+1 ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-700'} rounded-md mx-1`}>
+                                            {index+1}
+
+                                        </button>
+                                     ))
+                                
+                            }
+
+
+                        <button disabled={currentPage==totalPages} onClick={()=> handlePageChange(currentPage+1)} className='px-4 py-2 bg-gray-200 text-gray-700 rounded-md mr-2'>Next</button>
+                    </div>
                 </div>
             </div>
         </section>
