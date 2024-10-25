@@ -5,6 +5,7 @@ import Loading from '../../../components/Loading';
 import RatingStars from '../../../components/RatingStars';
 import { addToCart } from '../../../redux/features/cart/cartSlice';
 import { useFetchProductByIdQuery } from '../../../redux/features/products/productsApi';
+import ReviewsCard from '../reviews/ReviewsCard';
 
 const SingleProduct = () => {
     const {id} = useParams();
@@ -87,7 +88,7 @@ if (error) return <p>Error loading product details</p>
    {/* DISPLAY REVIEWS */}
 
    <section className='section__container mt-8'>
-    Reviews
+    <ReviewsCard productReviews ={productReviews}/>
    </section>
    
    </>
