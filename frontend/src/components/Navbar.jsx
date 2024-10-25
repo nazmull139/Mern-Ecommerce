@@ -27,7 +27,7 @@ const Navbar = () => {
 
   const dispatch = useDispatch();
   const {user} = useSelector((state)=>state.auth);
-  console.log(user);
+  //console.log(user);
 const [logoutUser] = useLogoutUserMutation();
 const navigate = useNavigate();
 

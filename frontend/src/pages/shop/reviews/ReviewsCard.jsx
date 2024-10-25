@@ -9,6 +9,7 @@ const ReviewsCard = ({productReviews}) => {
 
   const [isModalOpen , setIsModalOpen ] = useState(false)
   const reviews = productReviews || []
+  //console.log(reviews)
 
   const handleOpenReviewModal =() => {
     setIsModalOpen(true)

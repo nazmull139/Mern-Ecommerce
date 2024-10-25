@@ -5,16 +5,16 @@ import { getBaseUrl } from '../../../utils/baseURL';
 export const reviewApi = createApi({
     reducerPath: 'reviewApi',
     baseQuery: fetchBaseQuery({
-        baseUrl:`${getBaseUrl()}/api/reviews `,
+        baseUrl:`${getBaseUrl()}/api/reviews`, /// a space can occur error 
         credentials:'include',
     }),
     tagTypes: ["Reviews"],
     endpoints:(builder)=>({
-        postReview: builder.mutation({
+        postReview : builder.mutation({
             query:(reviewData)=>({
                 url:"/post-review",
                 method:"POST",
-                body: reviewData,
+                body: reviewData
             }),
             invalidatesTags:(result , error , {postId})=>[{type: "Reviews" , id: postId }],
 
