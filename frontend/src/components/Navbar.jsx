@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import avatarImg from '../assets/avatar.png';
 import CartModal from '../pages/shop/CartModal';
 import { useLogoutUserMutation } from '../redux/features/auth/authApi';
@@ -81,10 +81,10 @@ const userDropDownMenus = [
     <header className='fixed-nav-bar w-nav'>
             <nav className='max-w-screen-2xl mx-auto px-4 flex justify-between items-center'>
                    <ul className='nav__links'>
-                    <li className='link'><Link to="/">Home</Link></li>
-                    <li className='link'><Link to="/shop">Shop</Link></li>
-                    <li className='link'><Link to="/">Pages</Link></li>
-                    <li className='link'><Link to="/contact">Contact</Link></li>
+                    <li className='link'><NavLink to="/" className={({isActive , isPending})=> isActive ? "active": ""}>Home</NavLink></li>
+                    <li className='link'><NavLink to="/shop" className={({isActive , isPending})=> isActive ? "active": ""}>Shop</NavLink></li>
+                    <li className='link'><NavLink to="/pages" className={({isActive , isPending})=> isActive ? "active": ""}>Pages</NavLink></li>
+                    <li className='link'><NavLink to="/contact" className={({isActive , isPending})=> isActive ? "active": ""}>Contact</NavLink></li>
                    </ul>
 
                    {/*logo*/}
