@@ -49,7 +49,7 @@ const CartModal = ({products , isOpen , onClose}) => {
                                 products.map((item,index)=>(
 
                                     <div key={index} className='flex flex-col md:flex-row md:items-center md:justify-between shadow-md md:p-5 p-2 mb-4'>
-
+                                        <div>
                                         <div className='flex items-center '>
 
                                             <span className='mr-4 px-1 bg-primary text-white rounded-full'>
@@ -61,7 +61,7 @@ const CartModal = ({products , isOpen , onClose}) => {
                                                 <h5 className='text-lg font-medium '>{item.name}</h5>
                                                 <p>${Number(item.price).toFixed(2)}</p>
                                             </div>
-
+                                    </div>
                                             <div className='flex flex-row md:justify-start justify-end items-center mt-4'>
 
                                                 <button
@@ -71,7 +71,7 @@ const CartModal = ({products , isOpen , onClose}) => {
 
                                                 <span className='px-2 text-center mx-1'>{item.quantity}</span>
 
-                                                <button onClick={()=>handleQuantity('increment', item._id)} className='size-6 flex items-center justify-center px-1.5 rounded-full bg-gray-200
+                                                <button onClick={()=>handleQuantity('increment', item._id)} className='size-6 flex items-center justify-center px-1.5 rounded-full bg-gray-200 ml
                                                  text-gray-700 hover:bg-primary hover:text-white '>+</button>
 
                                                  <div className='ml-8'>

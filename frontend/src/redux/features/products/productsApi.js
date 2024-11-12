@@ -19,7 +19,7 @@ const productsApi = createApi({
                     const queryParams = new URLSearchParams({
                             category: category || '', 
                             color: color || '',
-                            minPrice : minPrice || '',
+                            minPrice : minPrice || 0,
                             maxPrice : maxPrice || '',
                             page: page.toString(),
                             limit: limit.toString(),

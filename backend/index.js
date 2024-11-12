@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-
 const app = express();
 const port = process.env.port || 5000;
 
@@ -32,20 +31,34 @@ app.use(cors({
 
 //// ALL ROUTES
 
-
+//// userRoutes
 const authRoutes = require('./src/users/user.route');
 const productRoutes = require('./src/products/products.route')
 const reviewRoutes = require('./src/reviews/reviews.router')
-
+const ordersRoutes = require("./src/orders/order.route")
+const statsRoutes = require("./src/stats/stats.route");
+const UploadImage = require('./src/utils/UploadImage');
 
 
 
 app.use("/api/auth",authRoutes);
 app.use("/api/products",productRoutes);
-app.use("/api/reviews",reviewRoutes);
+app.use("/api/reviews",reviewRoutes); 
+app.use("/api/orders" , ordersRoutes);
+app.use("/api/stats" , statsRoutes);
+
 
 
 main().then(()=>console.log("mongodb connected successfully")).catch(err => console.log(err));
+
+// upload image
+app.post('/uploadImage', async (req, res) => {
+  await UploadImage(req.body.image)
+  .then((url) => res.send(url))
+  .catch((error) => res.status(500).send(error));
+})
+
+
 
 async function main() {
   await mongoose.connect(process.env.DB_URL);

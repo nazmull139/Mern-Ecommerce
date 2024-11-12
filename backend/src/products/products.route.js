@@ -5,7 +5,12 @@ const Reviews = require('../reviews/reviews.model');
 const { parse } = require('dotenv');
 const verifyToken = require('../middleware/verifyToken');
 const verifyAdmin = require('../middleware/verifyAdmin');
+const { createNewProduct, getAllProducts, getSingleProduct, updateProductById, deleteProductById } = require('./product.controller');
 
+// create a product 
+
+router.post("/create-product",verifyToken,verifyAdmin, createNewProduct);
+{/* 
 router.post('/create-product', async(req , res)=> {
 
 
@@ -32,12 +37,12 @@ router.post('/create-product', async(req , res)=> {
         res.status(500).send({message: "Failed to create new product"}); 
     }
 });
-
+*/}
 
 //////////////////// GET ALL PRODUCTS ///////////////////////////
 
-
-
+router.get("/",getAllProducts);
+{/*  
 router.get('/', async (req, res)=> {
 
     try {
@@ -52,7 +57,7 @@ router.get('/', async (req, res)=> {
         }
 
 
-      {/*
+      {/* not fro use
 
         if(minPrice && maxPrice) {
             const min = parseFloat(minPrice);
@@ -62,7 +67,7 @@ router.get('/', async (req, res)=> {
             }
         }
         
-        */}  
+        /}  
 
         
         if (minPrice || maxPrice) {
@@ -92,7 +97,14 @@ router.get('/', async (req, res)=> {
     }
 })
 
+*/}
+
+
+
 ////////////// GET SINGLE PRODUCTS ///////////
+
+router.get("/:id", getSingleProduct);
+{/*  
 
 router.get("/:id", async (req,res)=>{
 
@@ -113,9 +125,15 @@ router.get("/:id", async (req,res)=>{
     }
 
 })
+*/}
+
+
+
 
 ///////// UPDATE PRODUCTS /////////
 
+router.patch("/update-product/:id",verifyToken,verifyAdmin, updateProductById);
+{/* 
 router.patch("/update-product/:id",verifyToken, verifyAdmin ,async (req , res)=>{
 
     try {
@@ -134,12 +152,13 @@ router.patch("/update-product/:id",verifyToken, verifyAdmin ,async (req , res)=>
     }
 
 })
-
+*/}
 
 ////////// DELETE A PRODUCT /////////
 
-
-router.delete("/:id", async(req , res)=>{
+router.delete("/:id", deleteProductById)
+{/*  
+router.delete("/:id",verifyToken,verifyAdmin, async(req , res)=>{
 
     try {
         const productId = req.params.id;
@@ -162,6 +181,10 @@ router.delete("/:id", async(req , res)=>{
     }
 
 })
+*/}
+
+
+
 
 
 /// GET RELATED PRODUCTS

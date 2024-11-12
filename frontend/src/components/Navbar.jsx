@@ -28,6 +28,8 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const {user} = useSelector((state)=>state.auth);
   //console.log(user);
+
+  //when mutation use [] and when query use {}
 const [logoutUser] = useLogoutUserMutation();
 const navigate = useNavigate();
 
@@ -47,7 +49,7 @@ const adminDropDownMenus = [
     {label: "Dashboard", path: "/dashboard/admin"},
     {label: "Manage Items", path: "/dashboard/manage-products"},
     {label: "All Orders", path: "/dashboard/manage-orders"},
-    {label: "Add New Post", path: "/dashboard/add-new-post"},
+    {label: "Add Product", path: "/dashboard/add-product"},
 ]
 
 /////////// USER DROP DOWN MENUS ////////////
@@ -68,6 +70,7 @@ const userDropDownMenus = [
     try {
       await logoutUser().unwrap();
       dispatch(logout());
+      alert("Logged out successfully");
       navigate('/')
     } catch (error) {
       console.error("Failed to logout",error)

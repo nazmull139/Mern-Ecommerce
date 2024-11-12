@@ -4,10 +4,21 @@ const User = require('./user.model');
 const generateToken = require('../middleware/generateToken');
 
 const verifyToken = require('../middleware/verifyToken');
+const { userRegistration, userLoggedIn, userLogOut, deleteUser, updateUserRole, editUserProfile, getAllUsers } = require('./user.controller');
+const verifyAdmin = require('../middleware/verifyAdmin');
+
 const router = express.Router();
 
+//// REGISTRATION
 
-router.post("/register", async (req , res) => {
+
+router.post("/register", userRegistration)
+
+{/*         
+  
+  router.post("/register", async (req , res) => {
+
+
     try {
         const {username , email , password  } = req.body;
         const user = new User({email , username , password});
@@ -18,10 +29,16 @@ router.post("/register", async (req , res) => {
             res.status(500).send({message:"Error registering user"})
     }
 })
+   */}
+
 
 
 /// LOGIN 
 
+router.post("/login", userLoggedIn)
+
+
+{/*   
     router.post("/login", async (req , res)=> {
 
       try {
@@ -37,7 +54,7 @@ router.post("/register", async (req , res) => {
         }
 
         const token = await generateToken(user._id);
-       
+       console.log("token: ",token);
        res.cookie('token', token , {
         httpOnly: true,
         secure: false,
@@ -63,6 +80,8 @@ router.post("/register", async (req , res) => {
         res.status(500).send({message:"Error logged in user"});
       }
     })
+*/}
+
 
 //// ALL USERS 
 
@@ -72,17 +91,25 @@ router.post("/register", async (req , res) => {
 
 /////// LOGOUT
 
+router.post("/logout",userLogOut)
+
+{/*  
 router.post('/logout', async(req,res)=>{
 
   res.clearCookie('token');
   res.status(200).send({message: "Loggedout successfully"})
   
 })
+*/}
 
-////// DELETEE
 
+////// DELETEE (only admin)
 
-router.delete("/users/:id", async(req , res) => {
+router.delete("/users/:id",verifyToken, verifyAdmin , deleteUser)
+
+{/*
+  
+  router.delete("/users/:id", async(req , res) => {
 
   try {
       const {id} = req.params;
@@ -100,11 +127,18 @@ router.delete("/users/:id", async(req , res) => {
 
 }
 );
+  
+  
+  */}
 
 
-  //// GET ALL USER
 
-  router.get("/users", async(req,res)=> {
+  //// GET ALL USER endpoints (token verify and admin)
+
+  router.get('/users',verifyToken,verifyAdmin, getAllUsers)
+
+  {/*
+ router.get("/users",verifyToken, async(req,res)=> {
 
     try {
         const users = await User.find({} ,'id email role').sort({createdAt: -1});
@@ -116,11 +150,20 @@ router.delete("/users/:id", async(req , res) => {
     }
 
   })
+ 
+
+     */}
 
 
-  /// UPdATE USER ROLE
 
-  router.put("/users/:id", async (req, res)=>{
+  /// UPdATE USER ROLE ( only admin )
+
+  router.put("/users/:id",verifyToken,verifyAdmin, updateUserRole);
+
+
+  {/*
+    
+    router.put("/users/:id", async (req, res)=>{
 
    try {
     
@@ -139,9 +182,17 @@ router.delete("/users/:id", async(req , res) => {
    }
   })
 
+    
+    */}
+
+  
  ////// // UPDATE USER PROFILE /////////////////
 
-  router.patch("/edit-profile", async(req,res)=>{
+ router.patch("/edit-profile/:id", editUserProfile)
+
+
+ {/*   
+  router.patch("/edit-profile/:id", async(req,res)=>{
 
     try {
         const {userId , username , profileImage , bio , profession} = req.body;
@@ -187,7 +238,7 @@ router.delete("/users/:id", async(req , res) => {
 
 
   })
-
+*/}
 
 
 

@@ -159,9 +159,9 @@ const ShopPage = () => {
 
 
                     {/* PAGINATION */}
+                            {
 
-                     
-                    <div className='mt-6 flex justify-center'>
+                                products.length > 0 &&  <div className='mt-6 flex justify-center'>
                         <button disabled={currentPage == 1} onClick={()=>handlePageChange(currentPage-1)} className='px-4 py-2 bg-gray-200 text-gray-700 rounded-md mr-2'>Previous</button>
 
                             {
@@ -178,6 +178,9 @@ const ShopPage = () => {
 
                         <button disabled={currentPage==totalPages} onClick={()=> handlePageChange(currentPage+1)} className='px-4 py-2 bg-gray-200 text-gray-700 rounded-md mr-2'>Next</button>
                     </div>
+                            }
+                     
+                   
                 </div>
             </div>
         </section>

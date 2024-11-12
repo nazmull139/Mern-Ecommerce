@@ -1,5 +1,6 @@
 import { useState } from "react";
 //import products from "../../data/products.json";
+import Loading from "../../components/Loading";
 import { useFetchAllProductsQuery } from "../../redux/features/products/productsApi";
 import ProductCards from "./ProductCards";
 
@@ -11,8 +12,8 @@ const TrendingProducts = () => {
     }
    // const [ProductsPerPage] = useState(false);
     const {data: {products = [], totalPages , totalProducts}= {},error , isLoading} = useFetchAllProductsQuery({ limit: visibleProducts})
-    
-console.log("pro : ",products)
+    if (isLoading) return <Loading/>
+//console.log("pro : ",products)
     
   return (
     <section className='section__container product__container'>

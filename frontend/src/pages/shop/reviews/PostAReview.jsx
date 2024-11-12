@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useFetchProductByIdQuery } from '../../../redux/features/products/productsApi';
 import { usePostReviewMutation } from '../../../redux/features/reviews/reviewsApi';
 
@@ -10,7 +10,7 @@ const PostAReview = ({isModalOpen , handleClose}) => {
     const [rating , setRating] = useState(0);
     const [comment , setComment] = useState('');
 
-
+    const navigate = useNavigate();
     const {refetch} = useFetchProductByIdQuery(id, {skip: !id});
     const [postReview] = usePostReviewMutation();
 
@@ -46,6 +46,10 @@ const handleSubmit = async (e) => {
         rating: rating,
         userId: user?._id,
         productId: id,
+    }
+    if(!user){
+        alert("You must be logged in to post a review")
+        navigate("/login");
     }
    
     try {

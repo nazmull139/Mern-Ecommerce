@@ -12,7 +12,7 @@ const ProductSchema = new mongoose.Schema({
 
     oldPrice : Number ,
 
-    image : String ,
+    image : {type:String , required:true} ,
 
     color : String ,
 

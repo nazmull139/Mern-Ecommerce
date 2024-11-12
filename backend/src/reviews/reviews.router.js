@@ -2,9 +2,16 @@ const express = require('express');
 const router = express.Router();
 const Reviews = require('./reviews.model');
 const Products = require('../products/products.model');
+const { postAReview, getUsersReview, getTotalReviewsCount } = require('./reviews.controller');
+const verifyToken = require('../middleware/verifyToken');
+
+
 
 // POST A NEW REVIEW
 
+
+router.post("/post-review", postAReview);
+{/*  
 router.post("/post-review" , async (req,res) =>{
 
     try {
@@ -59,9 +66,16 @@ router.post("/post-review" , async (req,res) =>{
 
 
 });
+*/}
+
+
+
+
 
 // total reviews
 
+router.get("/total-reviews", getTotalReviewsCount);
+{/* 
 router.get('/total-reviews', async(req, res)=>{
 
     try {
@@ -75,9 +89,15 @@ router.get('/total-reviews', async(req, res)=>{
 
 });
 
+*/}
+
+
+
 
 // get reviews by userUid
 
+router.get("/:userId", getUsersReview);
+{/* 
 router.get("/:userId", async(req , res)=>{
 
     const {userId} = req.params;
@@ -101,6 +121,6 @@ try {
 }
 
 })
-
+ */}
 
 module.exports = router;

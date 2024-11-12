@@ -2,6 +2,9 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getBaseUrl } from '../../../utils/baseURL';
 
 
+// query :  whn get method 
+// mutation : when others method
+
 const authApi = createApi({
 
     reducerPath: 'authAPi',
@@ -9,7 +12,7 @@ const authApi = createApi({
         baseUrl: `${getBaseUrl()}/api/auth`,
         credentials: 'include'
     }),
-    tagTypes: ['user'], 
+    tagTypes: ["Users"], 
 
     endpoints: (builder) => ({
 
@@ -43,24 +46,25 @@ const authApi = createApi({
         }), 
 
 
-        getUser: builder.mutation({
-            query:()=>({
-                url: '/users',
+        getUsers: builder.query({
+            query: () => ({
+                url: "/users",
                 method: 'GET'
             }),
             refetchOnMount: true,
-            invalidatesTags: ['User']
+            invalidatesTags: ["Users"],
         }),
 
 
         deleteUser: builder.mutation({
             query:(userId)=>({
-                url:`/user/${userId}`,
+                url:`/users/${userId}`,
                 method: "DELETE"
 
             }),
-            invalidatesTags: ['User']
+            invalidatesTags: ['Users']
         }), 
+        
 
 
         updateUserRole: builder.mutation({
@@ -70,13 +74,13 @@ const authApi = createApi({
                 body: {role}
             }),
             refetchOnMount: true,
-            invalidatesTags: ['User']
+            invalidatesTags: ['Users']
         }),
 
 
         editProfile: builder.mutation({
-            query:(profileData)=>({
-                url:'/edit-profile',
+            query:({id , profileData })=>({
+                url:`/edit-profile/${id}`,
                 method:"PATCH",
                 body: profileData
             })
@@ -90,7 +94,7 @@ const authApi = createApi({
 });
 
 
-export const{  useRegisterUserMutation , useLoginUserMutation , useLogoutUserMutation , useGetUserMutation , useDeleteUserMutation ,
+export const{  useRegisterUserMutation , useLoginUserMutation , useLogoutUserMutation ,useGetUsersQuery , useDeleteUserMutation ,
 
     useUpdateUserRoleMutation , useEditProfileMutation } = authApi;
 
