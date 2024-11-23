@@ -12,6 +12,7 @@ import { logout } from '../../redux/features/auth/authSlice';
         {path: "/dashboard/manage-products", label: "Manage Products"},
         {path: "/dashboard/users", label: "Users"},
         {path: "/dashboard/manage-orders", label: "Manage Orders"},
+        {path: "/dashboard/create-coupon", label: "Create Coupon"},
         //{path: "/dashboard/admin", label: "Dashboard"}
     ]
 

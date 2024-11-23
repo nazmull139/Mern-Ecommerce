@@ -1,10 +1,12 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { removeFromCart, updateQuantity } from '../../redux/features/cart/cartSlice';
 import OrderSummary from './OrderSummary';
 
 const CartModal = ({products , isOpen , onClose}) => {
     const dispatch = useDispatch();
+    const {user} = useSelector((state)=>state.auth);
  
     const handleQuantity = (type , id)=> {
 
@@ -22,6 +24,25 @@ const CartModal = ({products , isOpen , onClose}) => {
 
 
   return (
+    <>
+    {/* Verify to access all features */}
+      
+{user && !user.isVerified ? (
+<div className="max-w-[1000px] m-auto bg-red-500 text-yellow-800 border border-yellow-400 rounded-md p-2  text-center">
+ <p className="mb-2 font-semibold">
+    Please verify email to access Cart or tap again to close 
+ 
+ <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 mx-2 rounded">
+   <Link to="/verify-email">Verify Email</Link>
+
+ </button></p>
+</div>
+) :
+
+
+
+
+(
     <div className={`fixed z-[1000] inset-0 bg-black bg-opacity-80 transition-opacity ${isOpen? "opacity-100" : "opacity-0 pointer-events-none"}`}
      style={{transition:'opacity-300ms'}}>
 
@@ -38,6 +59,10 @@ const CartModal = ({products , isOpen , onClose}) => {
 
                     className='text-gray-600 hover:text-gray-900'><i className="ri-xrp-fill bg-black p-1 text-white"></i></button>
                     </div>
+
+
+
+                    
 
 
                     {/*//////////  PRODUCT CART  DETAILS /////////////*/}
@@ -111,6 +136,8 @@ const CartModal = ({products , isOpen , onClose}) => {
             </div>
 
     </div>
+ )}
+    </>
   )
 }
 

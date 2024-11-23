@@ -55,7 +55,7 @@ if (error) return <p>Error loading product details</p>
               <div className='md:w-1/2 w-full'>
               
                 <h3 className='font-semibold text-2xl mb-4'>{singleProduct?.name}</h3>
-                <p className='text-xl text-primary mb-4'>${singleProduct?.price} <s>${singleProduct?.oldPrice}</s></p>
+                <p className='text-xl text-primary mb-4'>${singleProduct.price } {singleProduct?.oldPrice ? <s>${singleProduct?.oldPrice}</s> : null}</p>
                 <p className='text-gray-400 mb-4'>{singleProduct?.description}</p>
 
                 {/* ADDITIONAL PRODUCT INFO */}

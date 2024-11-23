@@ -8,12 +8,18 @@ const UserPayments = () => {
 
     const {data  , isLoading , error} = useGetOrdersByEmailQuery(user?.email);
     if(isLoading) return <Loading/>
-    if(error) return <div>Something went wrong! Failed to fetch your orders</div> 
+    if (error) {
+      if (error.status === 404) {
+          return <div>No payments found for this user.</div>;
+      }
+      return <div>Something went wrong! Failed to fetch your payments.</div>;
+  }
 
 
     const orders = data.data || [];
 
-    console.log(orders)
+    console.log(orders[0].status)
+    
     const totalPayment = orders.reduce((acc, order) => acc + order.amount, 0).toFixed(2);
 
   return (

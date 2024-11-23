@@ -5,16 +5,18 @@ import { useDeleteOrderByIdMutation, useGetAllOrdersQuery } from '../../../../re
 import UpdateOrderModal from './UpdateOrderModal';
 
 const ManageOrders = () => {
+   
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const {data , isLoading , error , refetch} = useGetAllOrdersQuery();
-    const [deleteOrderById] = useDeleteOrderByIdMutation()
+    const [deleteOrderById] = useDeleteOrderByIdMutation();
+    
 
     if (isLoading) return <Loading />;
     if (error) return <div>Failed to fetch orders!</div>
 
     const orders = data.data || [];
-
+//console.log(orders)
     const handleDeleteClick = async (orderId) => {
         try {
             await deleteOrderById(orderId).unwrap();
@@ -64,7 +66,7 @@ const ManageOrders = () => {
                             <td className="py-3 px-4 border-b">{new Date(order?.updatedAt).toLocaleDateString()}</td>
                             <td className="py-3 px-4   border-b flex items-center space-x-4">
                                 <Link
-                                    to="#"
+                                    to={`orders/${order._id}`}
                                     className="text-blue-500 hover:underline"
                                 >
                                     View

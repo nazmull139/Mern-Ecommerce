@@ -35,6 +35,7 @@ const AddProduct = () => {
         category: '',
         description: '',
         price: '',
+        oldPrice: '',
         color: ''
     })
     const [image , setImage] = useState("");
@@ -48,11 +49,12 @@ const AddProduct = () => {
     }
 
     const [AddProduct] = useAddProductMutation()
+    
       
     const handleSubmit = async (e) => {
       e.preventDefault();
 
-      if (!product.name || !product.category || !product.price  || !product.color || !product.description) {
+      if (!product.name || !product.category || !product.price || !product.oldPrice  || !product.color || !product.description) {
           alert('Please fill in all fields.');
           return;
       }
@@ -111,6 +113,14 @@ const AddProduct = () => {
                     name="price"
                     placeholder="50"
                     value={product.price}
+                    onChange={handleChange}
+                />
+                 <TextInput
+                    type="number"
+                    label='Old Price'
+                    name="oldPrice"
+                    placeholder="50"
+                    value={product.oldPrice}
                     onChange={handleChange}
                 />
 

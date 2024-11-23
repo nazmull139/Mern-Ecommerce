@@ -25,12 +25,13 @@ const Login = () => {
         try {
                 const response = await loginUser(data).unwrap();
                 console.log(response);
+                
                 const {token,user}= response;
                 dispatch(setUser({user}));
                 alert('Login Successful');
                 navigate('/');
         } catch (error) {
-            setMessage("Please enter a valid email or password")
+            setMessage("Please enter a valid email or password or verify your email first")
         }
     }
 

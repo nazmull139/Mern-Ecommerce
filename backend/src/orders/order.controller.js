@@ -1,3 +1,4 @@
+const couponModel = require("../coupon/coupon.model");
 const { BASE_URL } = require("../utils/baseURL");
 const{ errorResponse, successResponse } =require("../utils/reponseHandler") ;
 const Order = require("./order.model");
@@ -5,9 +6,146 @@ const Order = require("./order.model");
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 
+
+const makePaymentRequest = async (req, res) => {
+    const { products, userId, grandTotal, selectedItems,  couponCode } = req.body;
+
+    //console.log("coupon back:",couponCode)
+
+    try {
+        const lineItems = products.map((product) => ({
+            price_data: {
+                currency: "usd",
+                product_data: {
+                    name: product.name,
+                    images: [product.image],
+                },
+                unit_amount: Math.round(grandTotal * 100 / selectedItems),
+            },
+            quantity: product.quantity,
+        }));
+
+        const session = await stripe.checkout.sessions.create({
+            line_items: lineItems,
+
+                /// Shipping Address
+            shipping_address_collection: {
+                allowed_countries: ['BD'],
+              },
+
+              /// Shipping Charge
+              shipping_options: [
+                {
+                  shipping_rate_data: {
+                    type: 'fixed_amount',
+                    fixed_amount: {
+                      amount: 60,
+                      currency: 'usd',
+                    },
+                    display_name: 'Inside Dhaka',
+                    delivery_estimate: {
+                      minimum: {
+                        unit: 'business_day',
+                        value: 2,
+                      },
+                      maximum: {
+                        unit: 'business_day',
+                        value: 3,
+                      },
+                    },
+                  },
+                },
+                {
+                  shipping_rate_data: {
+                    type: 'fixed_amount',
+                    fixed_amount: {
+                      amount: 150,
+                      currency: 'usd',
+                    },
+                    display_name: 'Outside Dhaka',
+                    delivery_estimate: {
+                      minimum: {
+                        unit: 'business_day',
+                        value: 5,
+                      },
+                      maximum: {
+                        unit: 'business_day',
+                        value:7,
+                      },
+                    },
+                  },
+                },
+              ],
+
+              // Phone Number
+            phone_number_collection: {
+                enabled: true,
+              },
+              ////////////////
+            payment_method_types: ["card"],
+            mode: "payment",
+            success_url: `${BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${BASE_URL}/cancel`,
+            metadata: {
+                userId: userId,
+                grandTotal: Math.round(grandTotal * 100),
+                couponCode: couponCode || "", // Include couponCode if provided
+            },
+        }); 
+       // console.log("payment session ---- :" ,session)
+
+        res.json({ id: session.id });
+    } catch (error) {
+        return errorResponse(res, 500, "Failed to create payment session", error);
+    }
+};
+
+
+{/* newest one 
+const makePaymentRequest = async (req, res) => {
+    const { products, userId, grandTotal,selectedItems, message } = req.body;
+
+    try {
+        // Create lineItems, but don't calculate total in the backend
+        const lineItems = products.map((product) => ({
+            price_data: {
+                currency: "usd",
+                product_data: {
+                    name: product.name,
+                    images: [product.image],
+                
+                },
+              
+                unit_amount: Math.round(grandTotal * 100 / selectedItems), // Product price in cents divided by selecteditems for coupon applied
+            }, 
+            
+            quantity: product.quantity,
+        }));
+
+        // Create the Stripe session using grandTotal
+        const session = await stripe.checkout.sessions.create({
+            line_items: lineItems,
+            payment_method_types: ["card"],
+            mode: "payment",
+            success_url: `${BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${BASE_URL}/cancel`,
+            metadata: {
+                userId: userId,
+                grandTotal: Math.round(grandTotal * 100), // Include the grandTotal in metadata
+            },
+        });
+
+        res.json({ id: session.id });
+    } catch (error) {
+        return errorResponse(res, 500, "Failed to create payment session", error);
+    }
+};
+*/}
+
+{/*  
  const makePaymentRequest = async (req,res)=>{
 
-    const {products, userId} = req.body ;
+    const {products, userId ,  grandTotal} = req.body ;
 
   
 
@@ -45,7 +183,121 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 
 }
+*/}
 
+
+
+
+
+const confirmPayment = async (req, res) => {
+    const { session_id } = req.body;
+
+    try {
+        const session = await stripe.checkout.sessions.retrieve(session_id, {
+            expand: ["line_items", "payment_intent"],
+        });
+
+        const paymentIntentId = session.payment_intent.id;
+        let order = await Order.findOne({ orderId: paymentIntentId });
+
+        if (!order) {
+            const lineItems = session.line_items.data.map((item) => ({
+                productId: item.price.product,
+                quantity: item.quantity,
+                name:item.description
+            }));
+          // console.log("confirm session ---- :" ,session)
+
+            const amount = session.amount_total / 100;
+            const addres = {
+
+                city:session.customer_details.address.city,
+                country: session.customer_details.address.country,
+                line1:session.customer_details.address.line1,
+                line2:session.customer_details.address.line2,
+               postalcode:session.customer_details.address.postal_code,
+            }
+            
+          //  session.customer_details.address;
+           // console.log(addres)
+
+            order = new Order({
+                orderId: paymentIntentId,
+                products: lineItems,
+                amount: amount,
+                address:addres,
+                email: session.customer_details.email,
+                phone:session.customer_details.phone,
+                buyer:session.customer_details.name,
+                status: session.payment_intent.status === "succeeded" ? "pending" : "failed",
+            });
+        } else {
+            order.status = session.payment_intent.status === "succeeded" ? "pending" : "failed";
+        }
+
+        await order.save();
+
+        // Mark the coupon as used only if the payment succeeded
+        if (session.metadata.couponCode && session.metadata.couponCode !== "") {
+            const coupon = await couponModel.findOne({ code: session.metadata.couponCode });
+
+            if (coupon) {
+                if (!coupon.usedBy.includes(session.metadata.userId)) {
+                    coupon.usedBy.push(session.metadata.userId);
+                    await coupon.save();
+                }
+            }
+        }
+
+        return successResponse(res, 200, "Order confirmed successfully", order);
+    } catch (error) {
+        console.error("Error confirming payment:", error);
+        res.status(500).json({ error: "Failed to confirm payment" });
+    }
+};
+
+
+
+{/*
+const confirmPayment = async (req, res) => {
+    const { session_id } = req.body;
+
+    try {
+        const session = await stripe.checkout.sessions.retrieve(session_id, {
+            expand: ["line_items", "payment_intent"],
+        });
+
+        const paymentIntentId = session.payment_intent.id;
+        const amount = session.metadata.grandTotal / 100; // Retrieve grandTotal from metadata
+        let order = await Order.findOne({ orderId: paymentIntentId });
+
+        if (!order) {
+            const lineItems = session.line_items.data.map((item) => ({
+                productId: item.price.product,
+                quantity: item.quantity,
+            }));
+
+            order = new Order({
+                orderId: paymentIntentId,
+                products: lineItems,
+                amount: amount,
+                email: session.customer_details.email,
+                status: session.payment_intent.status === "succeeded" ? "pending" : "failed",
+            });
+        } else {
+            order.status = session.payment_intent.status === "succeeded" ? "pending" : "failed";
+        }
+
+        await order.save();
+        return successResponse(res, 200, "Order confirmed successfully", order);
+    } catch (error) {
+        return errorResponse(res, 500, "Failed to confirm payment", error);
+    }
+};
+
+*/}
+{/*  
+  this is the newest one 
 
 const confirmPayment = async (req , res)=>{
 
@@ -92,7 +344,7 @@ const confirmPayment = async (req , res)=>{
     }
 
 }
-
+*/}
 
 {/*  
 const confirmPayment = async (req, res) => {

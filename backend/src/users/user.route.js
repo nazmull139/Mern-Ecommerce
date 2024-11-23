@@ -4,8 +4,10 @@ const User = require('./user.model');
 const generateToken = require('../middleware/generateToken');
 
 const verifyToken = require('../middleware/verifyToken');
-const { userRegistration, userLoggedIn, userLogOut, deleteUser, updateUserRole, editUserProfile, getAllUsers } = require('./user.controller');
+const { userRegistration, userLoggedIn, userLogOut, deleteUser, updateUserRole, editUserProfile, getAllUsers, userRegisVerify } = require('./user.controller');
 const verifyAdmin = require('../middleware/verifyAdmin');
+
+const verifyEmail = require('../middleware/verifyEmail');
 
 const router = express.Router();
 
@@ -31,7 +33,8 @@ router.post("/register", userRegistration)
 })
    */}
 
-
+//// verify email 
+router.post("/verify-email",userRegisVerify)
 
 /// LOGIN 
 

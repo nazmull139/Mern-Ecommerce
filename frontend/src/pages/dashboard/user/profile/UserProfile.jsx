@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import avatarImg from "../../../../assets/avatar.png";
 import { useEditProfileMutation } from '../../../../redux/features/auth/authApi';
 import { setUser } from '../../../../redux/features/auth/authSlice';
@@ -65,6 +66,20 @@ const UserProfile = () => {
 
     }
     return (
+
+        <>
+
+{user && !user.isVerified ? (
+<div className="max-w-[1000px] m-auto bg-yellow-100 text-yellow-800 border border-yellow-400 rounded-md p-2  text-center">
+ <p className="mb-2 font-semibold">
+ Your email is not verified. Please verify to access this feature
+ 
+ <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 mx-2 rounded">
+   <Link to="/verify-email">Verify Email</Link>
+
+ </button></p>
+</div>
+) :(
         <div className='container mx-auto p-6'>
             <div>
                 <div className='flex items-center mb-4'>
@@ -151,6 +166,9 @@ const UserProfile = () => {
                 )
             }
         </div>
+    )}
+</>
+
     )
 }
 

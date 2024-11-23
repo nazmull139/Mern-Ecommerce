@@ -42,7 +42,7 @@ const PaymentSuccess = () => {
   useEffect(()=>{
     const query = new URLSearchParams(window.location.search);
     const sessionId = query.get("session_id");
-    // console.log(sessionId)
+    console.log(sessionId)
     if(sessionId){
 
       const confirmedPayment = async () => {
@@ -68,7 +68,7 @@ const PaymentSuccess = () => {
       
     
   }, [])
-console.log(order)
+console.log("order",order)
 
 if(isLoading) return <Loading/>
 

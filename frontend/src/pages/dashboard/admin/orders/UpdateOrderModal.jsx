@@ -10,7 +10,7 @@ const UpdateOrderModal = ({order, isOpen, onClose}) => {
     const handleUpdate =  async () => {
         try {
             const response =  await updateOrderStatus({id: order?._id, status}).unwrap();
-            //console.log(response)
+            console.log(response)
             alert("Updated order status");
             onClose();
         } catch (error) {

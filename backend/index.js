@@ -10,8 +10,7 @@ require('dotenv').config()
 
 
 
-//admin
-//ghlplFD0uBaVzXG7
+
 
 
 ////// MIDDLEWARE SETUP ///////
@@ -38,6 +37,7 @@ const reviewRoutes = require('./src/reviews/reviews.router')
 const ordersRoutes = require("./src/orders/order.route")
 const statsRoutes = require("./src/stats/stats.route");
 const UploadImage = require('./src/utils/UploadImage');
+const couponRoutes = require('./src/coupon/coupon.route');
 
 
 
@@ -46,6 +46,7 @@ app.use("/api/products",productRoutes);
 app.use("/api/reviews",reviewRoutes); 
 app.use("/api/orders" , ordersRoutes);
 app.use("/api/stats" , statsRoutes);
+app.use("/api/coupon" , couponRoutes);
 
 
 

@@ -10,7 +10,13 @@ const UserReviews = () => {
 
     const {data , isLoading , error} = useGetReviewsByUserIdQuery(user?._id);
     if(isLoading) return <Loading/>
-    if(error) return <div>Failed to show reviews</div> 
+
+    if (error) {
+      if (error.status === 404) {
+          return <div>No reviews found for this user.</div>;
+      }
+      return <div>Something went wrong! Failed to fetch your orders.</div>;
+  }
 
     const reviews = data.data || [];
     console.log(data)

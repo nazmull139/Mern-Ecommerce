@@ -1,17 +1,22 @@
 
 import { createBrowserRouter } from "react-router-dom";
+
 import App from "../App";
 import ErrorPage from "../components/ErrorPage";
 import Login from "../components/Login";
 import PaymentSuccess from "../components/PaymentSuccess";
 import Register from "../components/Register";
+import VerifyEmail from "../components/VerifyEmail";
 import CategoryPage from "../pages/category/CategoryPage";
 import DashBoardLayout from "../pages/dashboard/DashBoardLayout";
 import AddProduct from "../pages/dashboard/admin/addProduct/AddProduct";
+import CreateCoupon from "../pages/dashboard/admin/couponPage/CreateCoupon";
+import UseCoupon from "../pages/dashboard/admin/couponPage/UseCoupon";
 import AdminDMain from "../pages/dashboard/admin/dashboard/AdminDMain";
 import ManageProduct from "../pages/dashboard/admin/manageProduct/ManageProduct";
 import UpdateProduct from "../pages/dashboard/admin/manageProduct/UpdateProduct";
 import ManageOrders from "../pages/dashboard/admin/orders/ManageOrders";
+import ViewOrder from "../pages/dashboard/admin/orders/ViewOrder";
 import ManageUsers from "../pages/dashboard/admin/users/ManageUsers";
 import UserDMain from "../pages/dashboard/user/dashboard/UserDMain";
 import OrderDetails from "../pages/dashboard/user/orders/OrderDetails";
@@ -24,7 +29,6 @@ import Search from "../pages/search/Search";
 import ShopPage from "../pages/shop/ShopPage";
 import SingleProduct from "../pages/shop/productDetails/SingleProduct";
 import PrivateRoute from "./PrivateRoute";
-
 
 const router = createBrowserRouter([
     {
@@ -68,6 +72,11 @@ const router = createBrowserRouter([
     {
       path:"/login",
       element:<Login/>
+    },
+    {
+      path:"verify-email",
+      element: <VerifyEmail></VerifyEmail>
+
     },
     {
       path:"/register",
@@ -133,6 +142,19 @@ const router = createBrowserRouter([
           path:"users",
           element:<PrivateRoute role="admin"><ManageUsers/></PrivateRoute>
         },
+        {
+          path:"create-coupon",
+          element: <PrivateRoute role='admin'><CreateCoupon/></PrivateRoute> 
+        },
+        {
+          path:'use',
+          element: <UseCoupon/>
+        },
+        {
+          path:'manage-orders/orders/:orderId',
+          element:<ViewOrder></ViewOrder>
+        }
+       
 
       ]
     }

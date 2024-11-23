@@ -4,14 +4,21 @@ const User = require("./user.model");
 const generateToken = require('../middleware/generateToken');
 const verifyToken = require('../middleware/verifyToken');
 const { successResponse, errorResponse } = require('../utils/reponseHandler');
+const { sendVerificationEamil, sendWelcomeEmail } = require('../middleware/email');
+
 
 const userRegistration = async (req , res ) => {
 
     try {
         const {username , email , password  } = req.body;
-        const user = new User({email , username , password});
+
+        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
+        const user = new User({email , username , password, verificationCode});
         await user.save();
-        res.status(201).send({message: "User Registered Successfully!"});
+       // console.log("registration",user)
+        sendVerificationEamil(user.email,verificationCode)
+
+        res.status(201).send({message: "User Registered Successfully!",user});
     } catch (error) {
             console.error("Error registering user",error);
             res.status(500).send({message:"Registration Failed"})
@@ -20,22 +27,50 @@ const userRegistration = async (req , res ) => {
 
 }
 
+//////////////// verify registration 
+const userRegisVerify = async (req,res)=>{
+
+  try {
+    const {code} = req.body;
+    const user =await User.findOne({verificationCode:code});
+    if(!user){
+      res.status(400).send({success: false, message:"invalid verification code",})
+    }
+   // console.log(user)
+    user.isVerified=true;
+    user.verificationCode = undefined;
+    await user.save();
+    await sendWelcomeEmail(user.email,user.name)
+    res.status(201).send({message: "User verified Successfully!",user});
+  } catch (error) {
+    console.error("Error verification code",error);
+            res.status(500).send({message:"Verify Failed"}) 
+  }
+
+
+} 
 
 
 const userLoggedIn = async (req , res ) => {
 
     try {
         const { email , password} = req.body;
-        //console.log(email , password);
-        const user =await User.findOne({email});
+     //  console.log(email , password); 
+       const user =await User.findOne({email});
+       // const user = req.user;
         if(!user){
             return res.status(404).send({message: "user not found"})
         }
+      //  if(!user.isVerified){
+          //  return res.status(400).send({message: "Verify Email",user:{
+            //  isVerified:user.isVerified
+           // }})
+       // }
         const isMatch = await user.comparePassword(password);
         if(!isMatch){
             return res.status(401).send({message: "password not matched"})
         }
-
+        //const isVerified = user.isVerified
         const token = await generateToken(user._id);
        console.log("token: ",token);
        res.cookie('token', token , {
@@ -52,8 +87,8 @@ const userLoggedIn = async (req , res ) => {
           role:user.role,
           profileImage:user.profileImage,
           bio:user.bio,
-          profession:user.profession
-
+          profession:user.profession,
+          isVerified:user.isVerified
 
         }});
 
@@ -218,6 +253,6 @@ const editUserProfile = async (req, res) => {
 
 
 module.exports = {
-    userRegistration , userLoggedIn , userLogOut , getAllUsers , deleteUser , updateUserRole , editUserProfile
+    userRegistration , userLoggedIn , userLogOut , getAllUsers , deleteUser , updateUserRole , editUserProfile , userRegisVerify
 }
 

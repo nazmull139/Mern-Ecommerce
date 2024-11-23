@@ -25,6 +25,15 @@ const authApi = createApi({
             })
         }),
 
+        verifyEmail:builder.mutation({
+            query:({ code })=>({
+                url:"/verify-email",
+                method:"POST",
+                body:{ code }
+            }),
+            invalidatesTags: ["Users"],
+        }),
+
 
         loginUser: builder.mutation({
             query: (credentials) => ({
@@ -96,6 +105,6 @@ const authApi = createApi({
 
 export const{  useRegisterUserMutation , useLoginUserMutation , useLogoutUserMutation ,useGetUsersQuery , useDeleteUserMutation ,
 
-    useUpdateUserRoleMutation , useEditProfileMutation } = authApi;
+    useUpdateUserRoleMutation , useEditProfileMutation , useVerifyEmailMutation } = authApi;
 
 export default authApi;

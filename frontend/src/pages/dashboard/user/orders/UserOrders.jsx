@@ -8,14 +8,19 @@ const UserOrders = () => {
     const {user} = useSelector((state)=> state.auth)    
     const {data , isLoading , error} = useGetOrdersByEmailQuery(user?.email)
    
-    ////console.log(data)
+    //console.log("data",data)
 
 
     if(isLoading) return <Loading/>
-    if(error) return <div>Something went wrong! Failed to fetch your orders</div> 
+    if (error) {
+        if (error.status === 404) {
+            return <div>No orders found for this user.</div>;
+        }
+        return <div>Something went wrong! Failed to fetch your orders.</div>;
+    }
 
     const orders = data.data || []
-     //console.log(orders)
+    // console.log("orders",orders)
   return (
     
     <section className="py-1 bg-blueGray-50">
