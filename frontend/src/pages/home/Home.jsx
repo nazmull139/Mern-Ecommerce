@@ -1,10 +1,8 @@
 
-import Blogs from '../blogs/Blogs'
+import CategoryPageAll from '../category/CategoryPageAll'
 import TrendingProducts from '../shop/TrendingProducts'
 import Banner from './Banner'
 import Categories from './Categories'
-import DealsSection from './DealsSection'
-import HeroSection from './HeroSection'
 import PromoBanner from './PromoBanner'
 
 const Home = () => {
@@ -14,11 +12,12 @@ const Home = () => {
 
     <Banner/>
     <Categories/>
-    <HeroSection/>
+    {/*<HeroSection/>*/}
     <TrendingProducts/>
-    <DealsSection/>
+    <CategoryPageAll/>
+   { /*<DealsSection/>*/}
     <PromoBanner/>
-    <Blogs/>
+    {/*<Blogs/>*/}
 
    </>
   )

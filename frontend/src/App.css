@@ -248,7 +248,7 @@ nav {
 
 .product__grid {
   max-width: var(--max-width-900);
-  margin: 4rem auto;
+  margin: 2rem auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 2rem;

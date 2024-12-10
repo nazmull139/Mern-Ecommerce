@@ -1,7 +1,8 @@
 
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import bannerImg from '../../assets/header.png';
+import logo from '../../assets/ARTZII.png';
+import bannerImg from '../../assets/shopping1.png';
 
 const Banner = () => {
   const {user} = useSelector((state)=>state.auth);
@@ -27,23 +28,20 @@ const Banner = () => {
 {/* Main Banner Page*/}
 
 
-    <div className='section__container header__container'>
+    <div className=' header__container'>
 
-      <div className='header__content z-30'>
-
-       <h4 className='uppercase'>
-            Up To 20% Discount
-        </h4>
-        <h1>
-            Girl's Fashion
+      <div className='header__content'>
+        <h1 >
+        <img src={logo} alt='logo' className='size-auto'></img> 
         </h1>
-        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam autem quibusdam harum veritatis dicta quis!</p>
+        <p>Discover Quality, Style, and Value - All in One Place!
+        Shop Your Favorites Now with Exclusive Deals!</p>
 
         <button className='btn'><Link to="/shop">Explore Now</Link></button>
 
       </div>
-      <div className='header__image'>
-        <img src={bannerImg} alt='banner image'></img>
+      <div >
+        <img src={bannerImg} alt='banner image' ></img> 
       </div>
 
 

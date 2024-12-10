@@ -1,14 +1,38 @@
 import React, { useState } from 'react';
-import productsData from '../../data/products.json';
+//import productsData from '../../data/products.json';
+import { useFetchAllProductsQuery } from '../../redux/features/products/productsApi';
 import ProductCards from '../shop/ProductCards';
 const Search = () => {
+
+
     const[searchQuery , setSearchQuery] = useState('');
-    const[filteredProducts , setFilteredProducts] = useState(productsData);
+   
+
+    const[filtersState , setFiltersState] = useState({
+        category : 'all',
+        color : 'all',
+        priceRange : ''
+    });
+  
+    const { category , color , priceRange} = filtersState;
+    //const [ProductsPerPage] = useState(14);
+
+    const {data: {products = [], totalPages , totalProducts}= {},error , isLoading} = useFetchAllProductsQuery({
+
+        category: category,
+        limit: Infinity ,
+    })
+
+console.log(products)
+
+ const[filteredProducts , setFilteredProducts] = useState(products);
+
+
     const handleSearch =()=>{
 
         const query = searchQuery.toLowerCase();
 
-        const filtered = productsData.filter((product)=> product.name.toLowerCase().includes(query) || product.description.toLowerCase().includes(query))
+        const filtered = products.filter((product)=> product?.name?.toLowerCase().includes(query) || product?.description?.toLowerCase().includes(query))
 
         setFilteredProducts(filtered);
 

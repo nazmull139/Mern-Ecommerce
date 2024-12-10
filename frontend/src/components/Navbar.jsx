@@ -7,6 +7,7 @@ import CartModal from '../pages/shop/CartModal';
 import { useLogoutUserMutation } from '../redux/features/auth/authApi';
 import { logout } from '../redux/features/auth/authSlice';
 
+
 const Navbar = () => {
 
   const products = useSelector((state)=> state.cart.products);
@@ -81,97 +82,117 @@ const userDropDownMenus = [
   }
 
   return (
-    <header className='fixed-nav-bar w-nav'>
-            <nav className='max-w-screen-2xl mx-auto px-4 flex justify-between items-center'>
-                   <ul className='nav__links'>
-                    <li className='link'><NavLink to="/" className={({isActive , isPending})=> isActive ? "active": ""}>Home</NavLink></li>
-                    <li className='link'><NavLink to="/shop" className={({isActive , isPending})=> isActive ? "active": ""}>Shop</NavLink></li>
-                    <li className='link'><NavLink to="/pages" className={({isActive , isPending})=> isActive ? "active": ""}>Pages</NavLink></li>
-                    <li className='link'><NavLink to="/contact" className={({isActive , isPending})=> isActive ? "active": ""}>Contact</NavLink></li>
-                   </ul>
+      <header className=" top-0 w-full bg-white shadow-md mb-2">
+        {/* Upper Section */}
+        <div className="flex justify-around items-center h-12  border-b border-gray-200 px-30 py-9">
+          {/* Search Icon */}
+          <Link to="/search" className="hover:text-primary">
+            <i className="ri-search-line text-xl"></i>
+          </Link>
 
-                   {/*logo*/}
+          {/* Logo */}
+          <div className="text-center">
+            <Link to="/" className=" text-2xl">
+            <span className='text-3xl text-red-600'>A</span><span>RTZII</span>
+            </Link>
+          </div>
 
-                   <div className='nav__logo'>
-                    <Link to={"/"}>Lebaba<span>.</span></Link>
-                    </div>
+          {/* Cart and User Dropdown */}
+          <div className="flex items-center space-x-4">
+            {/* Cart Icon */}
+            <button onClick={handleCartToggle} className="relative hover:text-primary">
+              <i className="ri-shopping-bag-line text-xl"></i>
+              {products.length > 0 && (
+                <sup className="absolute -top-1 -right-2 text-xs bg-primary text-white rounded-full px-1">
+                  {products.length}
+                </sup>
+              )}
+            </button>
 
-                    {/* Icons */}
-
-                    <div className='nav__icons relative'>
-                        
-                      <span>
-                        <Link to={"/search"}>
-                            <i className="ri-search-line"></i>
+            {/* User Dropdown */}
+            {user ? (
+              <div className="relative">
+                <img
+                  onClick={handleDropDownToggle}
+                  src={user?.profileImage || avatarImg}
+                  alt="User Profile"
+                  className="w-8 h-8 rounded-full cursor-pointer"
+                />
+                {isDropDownOpen && (
+                  <div className="absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg w-48 z-1">
+                    <ul className="text-sm font-medium text-gray-700">
+                      {dropDownMenus.map((menu, index) => (
+                        <li key={index}>
+                          <Link
+                            onClick={() => setIsDropDownOpen(false)}
+                            to={menu.path}
+                            className="block px-4 py-2 hover:bg-gray-100"
+                          >
+                            {menu.label}
+                          </Link>
+                        </li>
+                      ))}
+                      <li>
+                        <Link
+                          onClick={handleLogOut}
+                          className="block px-4 py-2 hover:bg-gray-100 "
+                        >
+                          Logout
                         </Link>
-                      </span>
-
-                      <span>
-                        <button onClick={handleCartToggle} className='hover:text-primary'>
-                        <i className="ri-shopping-bag-line"></i>
-                        <sup className='text-sm inline-block px-1.5 text-white rounded-full bg-primary text-center'>{products.length}</sup>
-                        </button>
-                      </span>
-
-                        {/* User Login Register */}
-
-                        
-                      <span>
-
-                        {
-                          user ? (
-                          
-                          <>
-                       <img 
-                       onClick={handleDropDownToggle}
-                       src={user?.profileImage || avatarImg} alt=''className='size-6 rounded-full cursor-pointer'/>
-                       {
-                        isDropDownOpen && (
-                            <div className='absolute right-0 mt-3 p-4 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50'>
-                              <ul className='font-medium space-y-2 p-2'>
-                                {dropDownMenus.map((menu,index)=>(
-
-                                  <li key={index}>
-                                    <Link 
-                                      onClick={()=>setIsDropDownOpen(false)}
-                                      className='dropdown-items' to={menu.path}
-                                    
-                                    >
-                                      {menu.label}
-                                    </Link>
-                                  </li>
-
-                                ))}
-                                <li><Link onClick={handleLogOut} className='dropdown-items'>Logout</Link></li>
-                              </ul>
-                            </div>
-
-                        )
-
-
-                       }
-                          
-                          </>    ) :
-                          
-                        (
-                            <Link to={"/login"}>
-                         <i className="ri-user-line"></i>
-                        </Link> 
-
-                        )
-                        }
-                        
-                      </span>
-                    </div>
-            </nav>
-
-
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link to="/login" className="hover:text-primary">
+                <i className="ri-user-line text-xl"></i>
+              </Link>
+            )}
             {
-                isCartOpen && <CartModal products={products} isOpen={isCartOpen} onClose={handleCartToggle}/>
-
+              user ? (
+                <Link
+                onClick={handleLogOut}
+                className="block py-2 hover:bg-gray-100 text-gray-700 font-semibold"
+              >
+                Logout
+              </Link>
+              ):("")
             }
-        </header>
+          </div>
+        </div>
+
+        {/* Lower Section */}
+        <div className="flex justify-center space-x-6 h-10 items-center bg-gray-100">
+          <ul className="flex space-x-6 text-lg font-medium text-gray-700">
+            <li>
+              <NavLink to="/" className={({ isActive }) => (isActive ? "text-primary font-semibold" : "hover:text-primary")}>
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/shop" className={({ isActive }) => (isActive ? "text-primary font-semibold" : "hover:text-primary")}>
+                Shop
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/pages" className={({ isActive }) => (isActive ? "text-primary font-semibold" : "hover:text-primary")}>
+                Pages
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/contact" className={({ isActive }) => (isActive ? "text-primary font-semibold" : "hover:text-primary")}>
+                Contact
+              </NavLink>
+            </li>
+          </ul>
+        </div>
+
+        {/* Cart Modal */}
+        {isCartOpen && <CartModal products={products} isOpen={isCartOpen} onClose={handleCartToggle} />}
+      </header>
+
   )
-}
+}  
 
 export default Navbar

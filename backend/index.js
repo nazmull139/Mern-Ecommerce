@@ -12,7 +12,6 @@ require('dotenv').config()
 
 
 
-
 ////// MIDDLEWARE SETUP ///////
 
 app.use(express.json({limit:"25mb"}));

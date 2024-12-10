@@ -32,8 +32,24 @@ const Categories = () => {
 
 
   return (
-   <>
-     <div className='product__grid'>
+   
+     <div className=' mt-20 w-[70vw] m-auto'>
+
+      <div className='mb-10'>
+
+      <div className='flex items-center justify-center gap-4 mb-5'>
+        
+    <hr className='flex-grow border-t border-gray-300 w-16' />
+    <span className='font-semibold text-3xl text-gray-800'>SHOP BY CATEGORY</span>
+    <hr className='flex-grow border-t border-gray-300 w-16' />
+
+      </div>
+      
+       </div>
+
+      <div className='product__grid  '>
+
+     
          {
            categories.map((category)=>(
             <Link  key={category.name} to={`/categories/${category.path}`} className='categories__card'>
@@ -50,9 +66,9 @@ const Categories = () => {
            )
 
          }
-    
+     </div>
     </div>
-    </>
+    
   )
 }
 
